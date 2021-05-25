@@ -14,6 +14,8 @@ public class SnakeGame extends ApplicationAdapter {
 	private Snake snake;
 	private Apple apple;
 	private Movement movement;
+	private WindowBorders borders;
+	private CollisionDetector collisionDetector;
 
 
 	SpriteBatch batch;
@@ -22,7 +24,15 @@ public class SnakeGame extends ApplicationAdapter {
 	public void create () {
 		System.out.println("CREATE");
 		batch = new SpriteBatch();
-		snake = new Snake(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		snake = new Snake();
+		borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		IObstacle[] obstacles = new IObstacle[]{snake, borders};
+		collisionDetector = new CollisionDetector(snake, obstacles);
+		//make collistion detector work on another thread
+		//collisionDetector.start();
+
+
+
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
 	}
@@ -35,13 +45,12 @@ public class SnakeGame extends ApplicationAdapter {
 		apple.render(batch);
 		batch.end();
 		updateTime(Gdx.graphics.getDeltaTime());
-
 		readInput();
-		if(snake.checkCollision()){
-			System.out.println("EXIT");
+
+		if(collisionDetector.checkCollisions()){
+			System.out.println("COLLISION");
 			Gdx.app.exit();
 		}
-
 
 		checkApple();
 	}
@@ -52,7 +61,7 @@ public class SnakeGame extends ApplicationAdapter {
 	}
 
 	private void checkApple(){
-		Vector2 snakeHeadPosition = snake.getHeadPosition();
+		Vector2 snakeHeadPosition = snake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
 			apple.moveToRandomPosition();
 			snake.grow();

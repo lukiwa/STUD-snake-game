@@ -26,7 +26,7 @@ class SnakePart {
     }
 }
 
-public class Snake {
+public class Snake implements IMovable, IObstacle {
     private int length;
     private final int partSize;
     private int screenWidth;
@@ -34,7 +34,7 @@ public class Snake {
 
     private Array<SnakePart> snakeParts;
 
-    public Snake(int screenWidth, int screenHeight) {
+    public Snake() {
         length = 3;
         int startX = 100;
         int startY = 100;
@@ -80,35 +80,28 @@ public class Snake {
         }
     }
 
-    public Vector2 getHeadPosition() {
-        return snakeParts.get(0).position;
-    }
-
     public void grow() {
         System.out.println("GROW");
         snakeParts.add(new SnakePart(new Vector2(snakeParts.get(snakeParts.size - 1).position.x,
                                                  snakeParts.get(snakeParts.size - 1).position.y)));
         ++length;
     }
-    public boolean checkCollision(){
-        if(snakeParts.get(0).position.x == 0 || snakeParts.get(0).position.x == screenWidth ){
-            return true;
-        }
 
-        if(snakeParts.get(0).position.y == 0 || snakeParts.get(0).position.y == screenHeight ){
-            return true;
-        }
+    @Override
+    public Vector2 getPosition() {
+        return snakeParts.get(0).position;
+    }
 
+    @Override
+    public boolean isCollisionDetected(IMovable movingObject) {
+        //TODO below only true when movingObject is "this"
         for (int i = 1; i < length - 1; ++i) {
-            if (snakeParts.get(0).position.x == snakeParts.get(i).position.x &&
-                snakeParts.get(0).position.y == snakeParts.get(i).position.y) {
+            if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
+                    movingObject.getPosition().y == snakeParts.get(i).position.y) {
                 return true;
             }
         }
 
         return false;
     }
-
-
-
 }
