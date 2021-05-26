@@ -33,7 +33,8 @@ public class CollisionDetector implements Runnable{
             }
         }
 
-        //Gdx.app.exit();
+        System.out.println("Collision detected in detector");
+        Gdx.app.exit();
     }
     public void start(){
         if(t == null){

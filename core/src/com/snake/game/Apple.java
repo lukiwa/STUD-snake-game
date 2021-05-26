@@ -17,6 +17,7 @@ public class Apple {
     public Vector2 position;
 
     Apple(int screenWidth, int screenHeight){
+        //TODO do not spawn apple on existing obstacle
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         int startX = 300;

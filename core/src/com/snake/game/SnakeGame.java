@@ -3,7 +3,6 @@ package com.snake.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -16,7 +15,7 @@ public class SnakeGame extends ApplicationAdapter {
 	private Movement movement;
 	private WindowBorders borders;
 	private CollisionDetector collisionDetector;
-
+	private StaticObstacle staticObstacle;
 
 	SpriteBatch batch;
 
@@ -26,31 +25,37 @@ public class SnakeGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		snake = new Snake();
 		borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		IObstacle[] obstacles = new IObstacle[]{snake, borders};
+		staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
+		IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
+
 		collisionDetector = new CollisionDetector(snake, obstacles);
-		//make collistion detector work on another thread
-		//collisionDetector.start();
+		collisionDetector.start();
 
 
 
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
+
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 1, 1, 1);
 		batch.begin();
+		staticObstacle.render(batch);
 		snake.render(batch);
 		apple.render(batch);
 		batch.end();
 		updateTime(Gdx.graphics.getDeltaTime());
 		readInput();
 
+		/*
 		if(collisionDetector.checkCollisions()){
 			System.out.println("COLLISION");
 			Gdx.app.exit();
 		}
+		*/
+
 
 		checkApple();
 	}

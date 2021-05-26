@@ -1,36 +1,29 @@
 package com.snake.game;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import org.w3c.dom.events.EventException;
 
-import java.util.ArrayList;
-import java.util.Vector;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 enum Movement {
     LEFT, UP, RIGHT, DOWN
 }
 
-class SnakePart {
-    public Texture texture;
-    public Vector2 position;
-    public int partSize;
-
+class SnakePart extends DrawablePart{
     public SnakePart(Vector2 position) {
-        texture = new Texture("head.png");
-        this.position = position;
-        assert (texture.getHeight() == texture.getWidth());
-
-        partSize = texture.getWidth();
+        super(position);
+        readTexture("head.png");
     }
 }
 
 public class Snake implements IMovable, IObstacle {
     private int length;
     private final int partSize;
-    private int screenWidth;
-    private int screenHeight;
+    private final Lock _mutex = new ReentrantLock(true);
+
 
     private Array<SnakePart> snakeParts;
 
@@ -39,8 +32,6 @@ public class Snake implements IMovable, IObstacle {
         int startX = 100;
         int startY = 100;
 
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
 
         SnakePart snakePart = new SnakePart(new Vector2(startX, startY));
         partSize = snakePart.partSize;
@@ -54,12 +45,15 @@ public class Snake implements IMovable, IObstacle {
     }
 
     public void render(SpriteBatch batch) {
+
         for (SnakePart snakePart : snakeParts) {
-            batch.draw(snakePart.texture, snakePart.position.x, snakePart.position.y);
+            snakePart.render(batch);
         }
     }
 
     public void move(Movement movement) {
+        _mutex.lock();
+
         for (int i = length - 1; i > 0; --i) {
             snakeParts.get(i).position.x = snakeParts.get(i - 1).position.x;
             snakeParts.get(i).position.y = snakeParts.get(i - 1).position.y;
@@ -78,6 +72,8 @@ public class Snake implements IMovable, IObstacle {
                 snakeParts.get(0).position.y -= partSize;
                 break;
         }
+
+        _mutex.unlock();
     }
 
     public void grow() {
@@ -95,11 +91,23 @@ public class Snake implements IMovable, IObstacle {
     @Override
     public boolean isCollisionDetected(IMovable movingObject) {
         //TODO below only true when movingObject is "this"
-        for (int i = 1; i < length - 1; ++i) {
-            if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
-                    movingObject.getPosition().y == snakeParts.get(i).position.y) {
-                return true;
+
+        try {
+            for (int i = 1; i < length - 1; ++i) {
+                _mutex.lock();
+
+                if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
+                        movingObject.getPosition().y == snakeParts.get(i).position.y) {
+                    throw new Exception("Collision detected");
+                }
+
+                _mutex.unlock();
+
             }
+        }
+        catch (Exception e){
+            _mutex.unlock();
+            return true;
         }
 
         return false;
