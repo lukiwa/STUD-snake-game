@@ -3,7 +3,6 @@ package com.snake.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -14,7 +13,9 @@ public class SnakeGame extends ApplicationAdapter {
 	private Snake snake;
 	private Apple apple;
 	private Movement movement;
-
+	private WindowBorders borders;
+	private CollisionDetector collisionDetector;
+	private StaticObstacle staticObstacle;
 
 	SpriteBatch batch;
 
@@ -22,25 +23,38 @@ public class SnakeGame extends ApplicationAdapter {
 	public void create () {
 		System.out.println("CREATE");
 		batch = new SpriteBatch();
-		snake = new Snake(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		snake = new Snake();
+		borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
+		IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
+
+		collisionDetector = new CollisionDetector(snake, obstacles);
+		collisionDetector.start();
+
+
+
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
+
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(1, 1, 1, 1);
 		batch.begin();
+		staticObstacle.render(batch);
 		snake.render(batch);
 		apple.render(batch);
 		batch.end();
 		updateTime(Gdx.graphics.getDeltaTime());
-
 		readInput();
-		if(snake.checkCollision()){
-			System.out.println("EXIT");
+
+		/*
+		if(collisionDetector.checkCollisions()){
+			System.out.println("COLLISION");
 			Gdx.app.exit();
 		}
+		*/
 
 
 		checkApple();
@@ -52,7 +66,7 @@ public class SnakeGame extends ApplicationAdapter {
 	}
 
 	private void checkApple(){
-		Vector2 snakeHeadPosition = snake.getHeadPosition();
+		Vector2 snakeHeadPosition = snake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
 			apple.moveToRandomPosition();
 			snake.grow();
