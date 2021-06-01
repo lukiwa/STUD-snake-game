@@ -10,9 +10,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class SnakeGame extends ApplicationAdapter {
 	private float timer = 0.08f;
-	private Snake snake;
+	private Snake snake, artificialSnake;
 	private Apple apple;
-	private Movement movement;
+	private Movement movement, artificialMovement;
 	private WindowBorders borders;
 	private CollisionDetector collisionDetector;
 	private StaticObstacle staticObstacle;
@@ -24,6 +24,7 @@ public class SnakeGame extends ApplicationAdapter {
 		System.out.println("CREATE");
 		batch = new SpriteBatch();
 		snake = new Snake();
+		artificialSnake = new Snake(300, 300);
 		borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
 		IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
@@ -35,6 +36,7 @@ public class SnakeGame extends ApplicationAdapter {
 
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
+		artificialMovement = Movement.LEFT;
 
 	}
 
@@ -44,6 +46,7 @@ public class SnakeGame extends ApplicationAdapter {
 		batch.begin();
 		staticObstacle.render(batch);
 		snake.render(batch);
+		artificialSnake.render(batch);
 		apple.render(batch);
 		batch.end();
 		updateTime(Gdx.graphics.getDeltaTime());
@@ -67,9 +70,14 @@ public class SnakeGame extends ApplicationAdapter {
 
 	private void checkApple(){
 		Vector2 snakeHeadPosition = snake.getPosition();
+		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
 			apple.moveToRandomPosition();
 			snake.grow();
+		}
+		if(artificialSnakeHeadPosition.x == apple.position.x && artificialSnakeHeadPosition.y == apple.position.y ) {
+			apple.moveToRandomPosition();
+			artificialSnake.grow();
 		}
 	}
 
@@ -78,6 +86,8 @@ public class SnakeGame extends ApplicationAdapter {
 		if(timer <= 0){
 			timer = 0.08f;
 			snake.move(movement);
+			SnakeToApple();
+			artificialSnake.move(artificialMovement);
 		}
 	}
 
@@ -103,5 +113,49 @@ public class SnakeGame extends ApplicationAdapter {
 			}
 		}
 
+	}
+
+	private void SnakeToApple()
+	{
+		Vector2 snake = artificialSnake.getPosition();
+
+		if(snake.x == apple.position.x && snake.y < apple.position.y) {
+			artificialMovement = Movement.UP;
+		}
+		if(snake.x == apple.position.x && snake.y > apple.position.y) {
+			artificialMovement = Movement.DOWN;
+		}
+		if(snake.y == apple.position.y && snake.x < apple.position.x) {
+			artificialMovement = Movement.RIGHT;
+		}
+		if(snake.y == apple.position.y && snake.x > apple.position.x) {
+			artificialMovement = Movement.LEFT;
+		}
+
+
+		if(snake.x < apple.position.x && snake.y < apple.position.y) {
+			if(artificialMovement == Movement.DOWN)
+				artificialMovement = Movement.RIGHT;
+			if(artificialMovement == Movement.LEFT)
+				artificialMovement = Movement.UP;
+		}
+		if(snake.x > apple.position.x && snake.y < apple.position.y) {
+			if(artificialMovement == Movement.DOWN)
+				artificialMovement = Movement.LEFT;
+			if(artificialMovement == Movement.RIGHT)
+				artificialMovement = Movement.UP;
+		}
+		if(snake.x < apple.position.x && snake.y > apple.position.y) {
+			if(artificialMovement == Movement.LEFT)
+				artificialMovement = Movement.DOWN;
+			if(artificialMovement == Movement.UP)
+				artificialMovement = Movement.RIGHT;
+		}
+		if(snake.x > apple.position.x && snake.y > apple.position.y) {
+			if(artificialMovement == Movement.UP)
+				artificialMovement = Movement.LEFT;
+			if(artificialMovement == Movement.RIGHT)
+				artificialMovement = Movement.DOWN;
+		}
 	}
 }

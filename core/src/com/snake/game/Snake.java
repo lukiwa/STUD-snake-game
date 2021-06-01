@@ -44,6 +44,21 @@ public class Snake implements IMovable, IObstacle {
         }
     }
 
+    public Snake(int startX, int startY) {
+        length = 3;
+
+
+        SnakePart snakePart = new SnakePart(new Vector2(startX, startY));
+        partSize = snakePart.partSize;
+
+        snakeParts = new Array<>();
+        snakeParts.add(snakePart);
+
+        for (int i = 0; i < length - 1; ++i) {
+            snakeParts.add(new SnakePart(new Vector2(startX + (i + 1) * partSize, startY)));
+        }
+    }
+
     public void render(SpriteBatch batch) {
 
         for (SnakePart snakePart : snakeParts) {
