@@ -14,7 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-
+/**
+ * End screen of the game. Allowing restart, save result, exit or redirect to screen with best results
+ */
 public class EndScreen implements Screen {
     private SnakeGame game;
     private SpriteBatch batch;

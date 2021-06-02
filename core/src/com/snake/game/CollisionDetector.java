@@ -5,6 +5,9 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Class running in own thread, responsible for detecting collision between subject and given obstacles
+ */
 public class CollisionDetector implements Runnable {
     private Thread t;
     private boolean timeToEnd;
@@ -23,6 +26,10 @@ public class CollisionDetector implements Runnable {
         this.timeToEnd = false;
     }
 
+    /**
+     * Checks for collision for all obstacle
+     * @return true if detected
+     */
     public boolean checkCollisions() {
         for (IObstacle obstacle : obstacles) {
             if (obstacle.isCollisionDetected(subject)) {
@@ -32,7 +39,9 @@ public class CollisionDetector implements Runnable {
         return false;
     }
 
-
+    /**
+     * Start thread and run "checkCollisons" until join
+     */
     @Override
     public void run() {
 
@@ -45,6 +54,9 @@ public class CollisionDetector implements Runnable {
         System.out.println("Collision detected and set variable - ending now");
     }
 
+    /**
+     * Start new thread
+     */
     public void start() {
         if (t == null) {
             t = new Thread(this, "CollisionDetector");
@@ -52,6 +64,9 @@ public class CollisionDetector implements Runnable {
         }
     }
 
+    /**
+     * Join underlaying thread and terminate run loop
+     */
     public void join() {
         timeToEnd = true;
 

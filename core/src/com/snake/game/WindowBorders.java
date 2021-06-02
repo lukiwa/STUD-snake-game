@@ -1,5 +1,8 @@
 package com.snake.game;
 
+/**
+ * Borders of the screen are actually obstacles
+ */
 public class WindowBorders implements IObstacle{
     private int screenWidth;
     private int screenHeight;

@@ -8,10 +8,9 @@ import org.w3c.dom.events.EventException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-enum Movement {
-    LEFT, UP, RIGHT, DOWN
-}
-
+/**
+ * Derived class from drawable part, represents one of the snake segments
+ */
 class SnakePart extends DrawablePart {
     public SnakePart(Vector2 position) {
         super(position);
@@ -19,6 +18,9 @@ class SnakePart extends DrawablePart {
     }
 }
 
+/**
+ * Player's snake
+ */
 public class Snake implements IMovable, IObstacle {
     private final int initialLength;
     private int length;
@@ -78,6 +80,9 @@ public class Snake implements IMovable, IObstacle {
         _mutex.unlock();
     }
 
+    /**
+     * Add new segment at the back of the snake, and increase length
+     */
     public void grow() {
         System.out.println("GROW");
         snakeParts.add(new SnakePart(new Vector2(snakeParts.get(snakeParts.size - 1).position.x,
@@ -85,16 +90,29 @@ public class Snake implements IMovable, IObstacle {
         ++length;
     }
 
+    /**
+     * Position is in fact the head of the snake - because only head can collide with other objects
+     * @return
+     */
     @Override
     public Vector2 getPosition() {
         return snakeParts.get(0).position;
     }
 
+    /**
+     * Points is current length - initial length
+     * @return
+     */
     public int getPoints() {
         System.out.println("LENGTH: " + length);
         return length - initialLength;
     }
 
+    /**
+     * Since snake can collide with other snake or with itself
+     * @param movingObject moving object
+     * @return true if collison is detected
+     */
     @Override
     public boolean isCollisionDetected(IMovable movingObject) {
 
