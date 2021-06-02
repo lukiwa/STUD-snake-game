@@ -2,7 +2,9 @@ package com.snake.game;
 
 import com.badlogic.gdx.*;
 
-
+/**
+ * Game abstraction, actually responsible for changing game screens and starts rendering
+ */
 public class SnakeGame extends Game {
 
     @Override

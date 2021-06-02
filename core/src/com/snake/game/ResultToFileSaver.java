@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+/**
+ * Class responsible for saving results to file
+ */
 public class ResultToFileSaver {
 
     public static void SaveResultsToFile(String filename, int playerPoints, int aiPoints) {

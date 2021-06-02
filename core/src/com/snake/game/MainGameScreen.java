@@ -9,6 +9,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Main game screen - actual game
+ */
 public class MainGameScreen implements Screen {
     private float timer = 0.08f;
     private Snake snake;

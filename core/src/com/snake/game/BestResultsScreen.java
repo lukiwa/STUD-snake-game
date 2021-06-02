@@ -19,6 +19,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Screen on which best results will be displayed
+ */
 public class BestResultsScreen implements Screen {
     private SnakeGame game;
     private SpriteBatch batch;
@@ -113,6 +116,10 @@ public class BestResultsScreen implements Screen {
         batch.end();
     }
 
+    /**
+     * Reads best result for both player and AI from the file
+     * @param filename filename which stores results
+     */
     public void getBestResultsFromFile(String filename){
         TreeSet<Integer> playerBestResultSet = new TreeSet<Integer>();
         TreeSet<Integer> aiBestResultSet = new TreeSet<Integer>();

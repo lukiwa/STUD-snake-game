@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-
+/**
+ * Inital menu screen
+ */
 public class MenuScreen implements Screen {
     private SnakeGame game;
     private SpriteBatch batch;
