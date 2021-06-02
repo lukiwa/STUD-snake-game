@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 
@@ -16,7 +17,7 @@ public class SnakeGame extends ApplicationAdapter {
 	private WindowBorders borders;
 	private CollisionDetector collisionDetector;
 	private StaticObstacle staticObstacle;
-
+	private Array<Vector2> obstaclesPostions;
 	SpriteBatch batch;
 
 	@Override
@@ -32,7 +33,7 @@ public class SnakeGame extends ApplicationAdapter {
 		collisionDetector = new CollisionDetector(snake, obstacles);
 		collisionDetector.start();
 
-
+		obstaclesPostions = staticObstacle.getObstacles(); // pobranie pozycji wszystkich przeszkód na planszy
 
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
@@ -84,9 +85,11 @@ public class SnakeGame extends ApplicationAdapter {
 	private void updateTime(float delta){
 		timer -= delta;
 		if(timer <= 0){
-			timer = 0.08f;
-			snake.move(movement);
+			timer = 0.03f;
+			//snake.move(movement);
+			avoidObstacle();
 			SnakeToApple();
+
 			artificialSnake.move(artificialMovement);
 		}
 	}
@@ -157,5 +160,52 @@ public class SnakeGame extends ApplicationAdapter {
 			if(artificialMovement == Movement.RIGHT)
 				artificialMovement = Movement.DOWN;
 		}
+	}
+
+	private void avoidObstacle() {
+
+		Vector2 collision = isCollision();
+		if(collision != null) {
+			if(artificialMovement == Movement.UP)
+				artificialMovement = Movement.LEFT;
+			if(artificialMovement == Movement.LEFT)
+				artificialMovement = Movement.DOWN;
+			if(artificialMovement == Movement.DOWN)
+				artificialMovement = Movement.RIGHT;
+			if(artificialMovement == Movement.RIGHT)
+				artificialMovement = Movement.UP;
+		}
+		if(collision != null)
+			artificialSnake.move(artificialMovement);
+	}
+
+	// funkcja sprawdzajaca czy wąż jest na kursie kolizyjnym z przeszkodą
+	private Vector2 isCollision() {
+		Vector2 snake = artificialSnake.getPosition();
+		if(artificialMovement == Movement.UP) {
+			for(Vector2 position : obstaclesPostions) {
+				if(position.x == snake.x && position.y > snake.y) // jeśli ten warunek jest spełniony, to wąż idzie na przeszkodę
+					return position;
+			}
+		}
+		if(artificialMovement == Movement.DOWN) {
+			for(Vector2 position : obstaclesPostions) {
+				if(position.x == snake.x && position.y < snake.y)
+					return position;
+			}
+		}
+		if(artificialMovement == Movement.RIGHT) {
+			for(Vector2 position : obstaclesPostions) {
+				if(position.y == snake.y && position.x > snake.x)
+					return position;
+			}
+		}
+		if(artificialMovement == Movement.LEFT) {
+			for(Vector2 position : obstaclesPostions) {
+				if(position.y == snake.y && position.x < snake.x)
+					return position;
+			}
+		}
+		return null;
 	}
 }
