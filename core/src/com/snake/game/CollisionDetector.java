@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CollisionDetector implements Runnable{
+public class CollisionDetector implements Runnable {
     private Thread t;
     private boolean timeToEnd;
 
@@ -16,16 +16,16 @@ public class CollisionDetector implements Runnable{
     private AtomicBoolean isDetected;
 
 
-    public CollisionDetector(IMovable subject, IObstacle[] obstacles, AtomicBoolean isDetected){
+    public CollisionDetector(IMovable subject, IObstacle[] obstacles, AtomicBoolean isDetected) {
         this.subject = subject;
         this.obstacles = obstacles;
         this.isDetected = isDetected;
         this.timeToEnd = false;
     }
 
-    public boolean checkCollisions(){
-        for(IObstacle obstacle: obstacles){
-            if(obstacle.isCollisionDetected(subject)){
+    public boolean checkCollisions() {
+        for (IObstacle obstacle : obstacles) {
+            if (obstacle.isCollisionDetected(subject)) {
                 return true;
             }
         }
@@ -36,21 +36,23 @@ public class CollisionDetector implements Runnable{
     @Override
     public void run() {
 
-        while (!timeToEnd){
-            if(checkCollisions()){
+        while (!timeToEnd) {
+            if (checkCollisions()) {
                 isDetected.set(true);
             }
         }
 
         System.out.println("Collision detected and set variable - ending now");
     }
-    public void start(){
-        if(t == null){
+
+    public void start() {
+        if (t == null) {
             t = new Thread(this, "CollisionDetector");
             t.start();
         }
     }
-    public void join(){
+
+    public void join() {
         timeToEnd = true;
 
         try {

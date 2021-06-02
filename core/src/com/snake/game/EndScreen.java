@@ -23,14 +23,17 @@ public class EndScreen implements Screen {
     private Image exitButton;
     private Stage stage;
     private String winner;
+    private BitmapFont font;
 
-    public EndScreen(final SnakeGame game, String winner){
+    public EndScreen(final SnakeGame game, String winner) {
         System.out.println("CREATE MENU");
 
-        stage= new Stage();
+        stage = new Stage();
         this.game = game;
         this.winner = winner;
-        batch=new SpriteBatch();
+        batch = new SpriteBatch();
+        font = new BitmapFont(); //or use alex answer to use custom font
+        font.getData().setScale(2f);
 
 
         replayButtonTexture = new Texture("replayButton.png");
@@ -44,7 +47,7 @@ public class EndScreen implements Screen {
         replayButton.setY(175);
         replayButton.setWidth(200);
         replayButton.setHeight(100);
-        replayButton.addListener(new ClickListener(){
+        replayButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.changeGameScreenToMainGameScreen();
@@ -59,7 +62,7 @@ public class EndScreen implements Screen {
         exitButton.setY(50);
         exitButton.setWidth(200);
         exitButton.setHeight(100);
-        exitButton.addListener(new ClickListener(){
+        exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
@@ -80,15 +83,10 @@ public class EndScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1,1,2,1);
+        Gdx.gl.glClearColor(1, 1, 2, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(menuBackgroundTexture,0,0, menuBackgroundTexture.getWidth(), menuBackgroundTexture.getHeight());
-
-
-        BitmapFont font = new BitmapFont(); //or use alex answer to use custom font
-        font.getData().setScale(2f);
-
+        batch.draw(menuBackgroundTexture, 0, 0, menuBackgroundTexture.getWidth(), menuBackgroundTexture.getHeight());
 
         replayButton.draw(batch, 1);
         exitButton.draw(batch, 1);

@@ -24,7 +24,7 @@ public class MainGameScreen implements Screen {
 
     SpriteBatch batch;
 
-    MainGameScreen(SnakeGame game){
+    MainGameScreen(SnakeGame game) {
         System.out.println("CREATE");
         this.game = game;
         batch = new SpriteBatch();
@@ -38,7 +38,6 @@ public class MainGameScreen implements Screen {
         //If detector detects collision with player snake, the AI wins
         collisionDetector = new CollisionDetector(snake, obstacles, playerHasLost);
         collisionDetector.start();
-
 
 
         apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -62,24 +61,24 @@ public class MainGameScreen implements Screen {
         readInput();
         checkApple();
 
-        if(playerHasLost.get()){
+        if (playerHasLost.get()) {
             System.out.println("PLAYER HAS LOST");
             collisionDetector.join();
             game.changeGameScreenToEndScreen("AI");
         }
     }
 
-    private void checkApple(){
+    private void checkApple() {
         Vector2 snakeHeadPosition = snake.getPosition();
-        if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
+        if (snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y) {
             apple.moveToRandomPosition();
             snake.grow();
         }
     }
 
-    private void updateTime(float delta){
+    private void updateTime(float delta) {
         timer -= delta;
-        if(timer <= 0){
+        if (timer <= 0) {
             timer = 0.08f;
             snake.move(movement);
         }
