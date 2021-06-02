@@ -21,6 +21,10 @@ public class SnakeGame extends Game {
         setScreen(new EndScreen(this, winner, playerPoints, aiPoints));
     }
 
+    public void changeGameScreenToBestResultsScreen(String resultsFilename) {
+        setScreen(new BestResultsScreen(this, resultsFilename));
+    }
+
     @Override
     public void render() {
         super.render();
