@@ -23,17 +23,32 @@ public class EndScreen implements Screen {
     private Image exitButton;
     private Stage stage;
     private String winner;
-    private BitmapFont font;
+    private BitmapFont winnerText;
+    private BitmapFont playerPointsText;
+    private BitmapFont aiPointsText;
 
-    public EndScreen(final SnakeGame game, String winner) {
+    private int playerPoints;
+    private int aiPoints;
+
+    public EndScreen(final SnakeGame game, String winner, int playerPoints, int aiPoints) {
         System.out.println("CREATE MENU");
 
         stage = new Stage();
         this.game = game;
         this.winner = winner;
+        this.playerPoints = playerPoints;
+        this.aiPoints = aiPoints;
+
+
         batch = new SpriteBatch();
-        font = new BitmapFont(); //or use alex answer to use custom font
-        font.getData().setScale(2f);
+        winnerText = new BitmapFont();
+        winnerText.getData().setScale(2f);
+
+        playerPointsText= new BitmapFont();
+        playerPointsText.getData().setScale(2f);
+
+        aiPointsText = new BitmapFont();
+        aiPointsText.getData().setScale(2f);
 
 
         replayButtonTexture = new Texture("replayButton.png");
@@ -91,7 +106,9 @@ public class EndScreen implements Screen {
         replayButton.draw(batch, 1);
         exitButton.draw(batch, 1);
 
-        font.draw(batch, " Zwyciezca: " + winner, 150, 400);
+        winnerText.draw(batch, " Zwyciezca: " + winner, 150, 450);
+        playerPointsText.draw(batch, " Punkty gracza: " + playerPoints, 150, 400);
+        aiPointsText.draw(batch, " Punkty AI: " + aiPoints, 150, 350);
 
         batch.end();
     }
