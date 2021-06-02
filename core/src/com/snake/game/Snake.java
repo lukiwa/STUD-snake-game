@@ -12,7 +12,7 @@ enum Movement {
     LEFT, UP, RIGHT, DOWN
 }
 
-class SnakePart extends DrawablePart{
+class SnakePart extends DrawablePart {
     public SnakePart(Vector2 position) {
         super(position);
         readTexture("head.png");
@@ -20,6 +20,7 @@ class SnakePart extends DrawablePart{
 }
 
 public class Snake implements IMovable, IObstacle {
+    private final int initialLength;
     private int length;
     private final int partSize;
     private final Lock _mutex = new ReentrantLock(true);
@@ -28,7 +29,8 @@ public class Snake implements IMovable, IObstacle {
     private Array<SnakePart> snakeParts;
 
     public Snake() {
-        length = 3;
+        initialLength = 3;
+        length = initialLength;
         int startX = 100;
         int startY = 100;
 
@@ -79,7 +81,7 @@ public class Snake implements IMovable, IObstacle {
     public void grow() {
         System.out.println("GROW");
         snakeParts.add(new SnakePart(new Vector2(snakeParts.get(snakeParts.size - 1).position.x,
-                                                 snakeParts.get(snakeParts.size - 1).position.y)));
+                snakeParts.get(snakeParts.size - 1).position.y)));
         ++length;
     }
 
@@ -88,24 +90,35 @@ public class Snake implements IMovable, IObstacle {
         return snakeParts.get(0).position;
     }
 
+    public int getPoints() {
+        System.out.println("LENGTH: " + length);
+        return length - initialLength;
+    }
+
     @Override
     public boolean isCollisionDetected(IMovable movingObject) {
-        //TODO below only true when movingObject is "this"
+
+        int startingIndex = 0;
+        if (movingObject == this) {
+            startingIndex = 1;
+        }
 
         try {
-            for (int i = 1; i < length - 1; ++i) {
-                _mutex.lock();
+            if (movingObject == this) {
 
-                if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
-                        movingObject.getPosition().y == snakeParts.get(i).position.y) {
-                    throw new Exception("Collision detected");
+                for (int i = startingIndex; i < length - 1; ++i) {
+                    _mutex.lock();
+
+                    if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
+                            movingObject.getPosition().y == snakeParts.get(i).position.y) {
+                        throw new Exception("Collision detected");
+                    }
+
+                    _mutex.unlock();
+
                 }
-
-                _mutex.unlock();
-
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             _mutex.unlock();
             return true;
         }

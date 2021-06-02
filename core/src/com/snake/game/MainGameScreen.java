@@ -1,6 +1,5 @@
 package com.snake.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -64,7 +63,7 @@ public class MainGameScreen implements Screen {
         if (playerHasLost.get()) {
             System.out.println("PLAYER HAS LOST");
             collisionDetector.join();
-            game.changeGameScreenToEndScreen("AI");
+            game.changeGameScreenToEndScreen("AI", snake.getPoints(), 0);
         }
     }
 
