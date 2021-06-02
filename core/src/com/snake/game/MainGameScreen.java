@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class MainGameScreen implements Screen {
     private float timer = 0.08f;
     private Snake snake;
@@ -17,6 +19,8 @@ public class MainGameScreen implements Screen {
     private CollisionDetector collisionDetector;
     private StaticObstacle staticObstacle;
     private SnakeGame game;
+
+    private AtomicBoolean playerHasLost;
 
     SpriteBatch batch;
 
@@ -29,7 +33,10 @@ public class MainGameScreen implements Screen {
         staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
         IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
 
-        collisionDetector = new CollisionDetector(snake, obstacles);
+        playerHasLost = new AtomicBoolean(false);
+
+        //If detector detects collision with player snake, the AI wins
+        collisionDetector = new CollisionDetector(snake, obstacles, playerHasLost);
         collisionDetector.start();
 
 
@@ -54,6 +61,12 @@ public class MainGameScreen implements Screen {
         updateTime(Gdx.graphics.getDeltaTime());
         readInput();
         checkApple();
+
+        if(playerHasLost.get()){
+            System.out.println("PLAYER HAS LOST");
+            collisionDetector.join();
+            game.changeGameScreenToEndScreen("AI");
+        }
     }
 
     private void checkApple(){

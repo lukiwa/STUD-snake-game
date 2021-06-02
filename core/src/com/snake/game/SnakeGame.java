@@ -16,8 +16,10 @@ public class SnakeGame extends Game{
 		setScreen(new MainGameScreen(this));
 	}
 
-	public void changeGameScreenToEndScreen(){
-		//TBD
+	public void changeGameScreenToEndScreen(String winner){
+		System.out.println("WINNER: " + winner);
+		setScreen(new EndScreen(this, winner));
+
 	}
 
 	@Override
