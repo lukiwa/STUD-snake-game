@@ -7,12 +7,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import java.lang.Math;
+import java.util.Arrays;
+import java.util.Vector;
 
 
 public class SnakeGame extends ApplicationAdapter {
 	private float timer = 0.08f;
 	private Snake snake, artificialSnake;
 	private Apple apple;
+	private Frog frog;
 	private Movement movement, artificialMovement;
 	private WindowBorders borders;
 	private CollisionDetector collisionDetector;
@@ -36,6 +40,8 @@ public class SnakeGame extends ApplicationAdapter {
 		obstaclesPostions = staticObstacle.getObstacles(); // pobranie pozycji wszystkich przeszkód na planszy
 
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		frog = new Frog(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		System.out.println(Gdx.graphics.getWidth());
 		movement = Movement.RIGHT;
 		artificialMovement = Movement.LEFT;
 
@@ -49,16 +55,16 @@ public class SnakeGame extends ApplicationAdapter {
 		snake.render(batch);
 		artificialSnake.render(batch);
 		apple.render(batch);
+		frog.render(batch);
 		batch.end();
 		updateTime(Gdx.graphics.getDeltaTime());
 		readInput();
 
-		/*
-		if(collisionDetector.checkCollisions()){
-			System.out.println("COLLISION");
-			Gdx.app.exit();
-		}
-		*/
+		//if(collisionDetector.checkCollisions()){
+		//	System.out.println("COLLISION");
+		//	Gdx.app.exit();
+		//}
+
 
 
 		checkApple();
@@ -89,7 +95,7 @@ public class SnakeGame extends ApplicationAdapter {
 			//snake.move(movement);
 			avoidObstacle();
 			SnakeToApple();
-
+			frog.move(frogMove());
 			artificialSnake.move(artificialMovement);
 		}
 	}
@@ -171,12 +177,11 @@ public class SnakeGame extends ApplicationAdapter {
 			if(artificialMovement == Movement.LEFT)
 				artificialMovement = Movement.DOWN;
 			if(artificialMovement == Movement.DOWN)
-				artificialMovement = Movement.RIGHT;
+				artificialMovement = Movement.LEFT;
 			if(artificialMovement == Movement.RIGHT)
 				artificialMovement = Movement.UP;
+		artificialSnake.move(artificialMovement);
 		}
-		if(collision != null)
-			artificialSnake.move(artificialMovement);
 	}
 
 	// funkcja sprawdzajaca czy wąż jest na kursie kolizyjnym z przeszkodą
@@ -207,5 +212,61 @@ public class SnakeGame extends ApplicationAdapter {
 			}
 		}
 		return null;
+	}
+
+	private Movement frogMove() {
+		Vector2 snakePosition = artificialSnake.getPosition();
+		double distance = checkDistance(snakePosition, frog.position);
+
+		Vector2 location = frog.position;
+		if(location.x < 10)
+			return Movement.RIGHT;
+		if(location.x > 490)
+			return Movement.LEFT;
+		if(location.y < 10)
+			return Movement.UP;
+		if(location.y > 490)
+			return Movement.DOWN;
+
+		if(distance < 10) {
+			Vector2 positionUp = frog.position;
+			positionUp.y += 1;
+			double distanceUp = checkDistance(snakePosition, positionUp);
+
+			Vector2 positionDown = frog.position;
+			positionDown.y -= 1;
+			double distanceDown = checkDistance(snakePosition, positionDown);
+
+			Vector2 positionLeft = frog.position;
+			positionLeft.x -= 1;
+			double distanceLeft = checkDistance(snakePosition, positionLeft);
+
+			Vector2 positionRight = frog.position;
+			positionRight.x += 1;
+			double distanceRight = checkDistance(snakePosition, positionRight);
+
+			double[] table = {distanceRight, distanceUp, distanceDown, distanceLeft};
+			Arrays.sort(table);
+			System.out.println(distance);
+			if (table[3] == distanceUp)
+				return Movement.UP;
+			if (table[3] == distanceDown)
+				return Movement.DOWN;
+			if (table[3] == distanceLeft)
+				return Movement.LEFT;
+			if (table[3] == distanceRight)
+				return Movement.RIGHT;
+		}
+
+		Movement[] movements = {Movement.UP, Movement.DOWN, Movement.LEFT, Movement.RIGHT};
+		int i = (int)(Math.random()*3) + 1;
+		return movements[i];
+
+	}
+
+	private double checkDistance(Vector2 snake, Vector2 item)
+	{
+		double distance = Math.sqrt(Math.pow((snake.x - item.x), 2) + Math.pow((snake.y - item.y), 2));
+		return  distance;
 	}
 }
