@@ -49,4 +49,12 @@ public class Frog {
                 break;
         }
     }
+
+    public void moveToRandomPosition(){
+        int x = Random.getRandomDivisibleByNumber(textureSize, screenWidth - textureSize, textureSize);
+        int y = Random.getRandomDivisibleByNumber(textureSize, screenHeight - textureSize, textureSize);
+
+        position = new Vector2(x,y);
+
+    }
 }

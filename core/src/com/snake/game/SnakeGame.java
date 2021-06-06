@@ -66,7 +66,7 @@ public class SnakeGame extends ApplicationAdapter {
 		//}
 
 
-
+		checkFrog();
 		checkApple();
 	}
 
@@ -75,7 +75,7 @@ public class SnakeGame extends ApplicationAdapter {
 		batch.dispose();
 	}
 
-	private void checkApple(){
+	private void checkApple() {
 		Vector2 snakeHeadPosition = snake.getPosition();
 		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
@@ -88,11 +88,26 @@ public class SnakeGame extends ApplicationAdapter {
 		}
 	}
 
+	private void checkFrog() {
+		Vector2 snakeHeadPosition = snake.getPosition();
+		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
+		if(snakeHeadPosition.x == frog.position.x && snakeHeadPosition.y == frog.position.y ){
+			frog.moveToRandomPosition();
+			snake.grow();
+			snake.grow();
+		}
+		if(artificialSnakeHeadPosition.x == frog.position.x && artificialSnakeHeadPosition.y == frog.position.y ) {
+			frog.moveToRandomPosition();
+			artificialSnake.grow();
+			artificialSnake.grow();
+		}
+	}
+
 	private void updateTime(float delta){
 		timer -= delta;
 		if(timer <= 0){
-			timer = 0.03f;
-			//snake.move(movement);
+			timer = 0.08f;
+			snake.move(movement);
 			avoidObstacle();
 			SnakeToApple();
 			frog.move(frogMove());
@@ -168,6 +183,7 @@ public class SnakeGame extends ApplicationAdapter {
 		}
 	}
 
+
 	private void avoidObstacle() {
 
 		Vector2 collision = isCollision();
@@ -215,9 +231,8 @@ public class SnakeGame extends ApplicationAdapter {
 	}
 
 	private Movement frogMove() {
-		Vector2 snakePosition = artificialSnake.getPosition();
+		Vector2 snakePosition = snake.getPosition();
 		double distance = checkDistance(snakePosition, frog.position);
-
 		Vector2 location = frog.position;
 		if(location.x < 10)
 			return Movement.RIGHT;
@@ -228,7 +243,7 @@ public class SnakeGame extends ApplicationAdapter {
 		if(location.y > 490)
 			return Movement.DOWN;
 
-		if(distance < 10) {
+		if(distance < 50) {
 			Vector2 positionUp = frog.position;
 			positionUp.y += 1;
 			double distanceUp = checkDistance(snakePosition, positionUp);
@@ -261,12 +276,11 @@ public class SnakeGame extends ApplicationAdapter {
 		Movement[] movements = {Movement.UP, Movement.DOWN, Movement.LEFT, Movement.RIGHT};
 		int i = (int)(Math.random()*3) + 1;
 		return movements[i];
-
 	}
 
 	private double checkDistance(Vector2 snake, Vector2 item)
 	{
 		double distance = Math.sqrt(Math.pow((snake.x - item.x), 2) + Math.pow((snake.y - item.y), 2));
-		return  distance;
+		return distance;
 	}
 }
