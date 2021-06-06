@@ -19,7 +19,7 @@ public class SnakeGame extends ApplicationAdapter {
 	private Frog frog;
 	private Movement movement, artificialMovement;
 	private WindowBorders borders;
-	private CollisionDetector collisionDetector;
+	private CollisionDetector collisionDetector, secondDetector;
 	private StaticObstacle staticObstacle;
 	private Array<Vector2> obstaclesPostions;
 	SpriteBatch batch;
@@ -35,8 +35,9 @@ public class SnakeGame extends ApplicationAdapter {
 		IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
 
 		collisionDetector = new CollisionDetector(snake, obstacles);
+		secondDetector = new CollisionDetector(artificialSnake, obstacles);
 		collisionDetector.start();
-
+		secondDetector.start();
 		obstaclesPostions = staticObstacle.getObstacles(); // pobranie pozycji wszystkich przeszkód na planszy
 
 		apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
