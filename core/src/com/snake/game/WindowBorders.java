@@ -1,5 +1,8 @@
 package com.snake.game;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
 /**
  * Borders of the screen are actually obstacles
  */
@@ -23,5 +26,10 @@ public class WindowBorders implements IObstacle{
         }
 
         return false;
+    }
+
+    @Override
+    public Array<Vector2> getObstaclePositions() {
+        return new Array<Vector2>();
     }
 }

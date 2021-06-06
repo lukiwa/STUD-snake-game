@@ -21,11 +21,11 @@ public class MainGameScreen implements Screen {
     private Frog frog;
 	private Movement movement, artificialMovement;
     private WindowBorders borders;
-    private CollisionDetector collisionDetector, secondDetector;
+    private CollisionDetector playerCollisionDetector, aiCollisionDetector;
     private StaticObstacle staticObstacle;
     private SnakeGame game;
     private Array<Vector2> obstaclesPostions;
-    private AtomicBoolean playerHasLost;
+    private AtomicBoolean playerHasLost, aiHasLost;
 
     SpriteBatch batch;
 
@@ -35,20 +35,23 @@ public class MainGameScreen implements Screen {
         batch = new SpriteBatch();
         snake = new Snake();
         artificialSnake = new Snake(300, 300);
+
         borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
-        IObstacle[] obstacles = new IObstacle[]{snake, borders, staticObstacle};
+		obstaclesPostions = staticObstacle.getObstaclePositions();
+		IObstacle[] obstacles = new IObstacle[]{snake, artificialSnake, borders, staticObstacle};
 
         playerHasLost = new AtomicBoolean(false);
+		aiHasLost = new AtomicBoolean(false);
 
-        //If detector detects collision with player snake, the AI wins
-        collisionDetector = new CollisionDetector(snake, obstacles, playerHasLost);
-        secondDetector = new CollisionDetector(artificialSnake, obstacles, playerHasLost);
-        collisionDetector.start();
-        secondDetector.start();
-        obstaclesPostions = staticObstacle.getObstacles();// pobranie pozycji wszystkich przeszkód na planszy
 
-        apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        playerCollisionDetector = new CollisionDetector(snake, obstacles, playerHasLost);
+        aiCollisionDetector = new CollisionDetector(artificialSnake, obstacles, aiHasLost);
+        playerCollisionDetector.start();
+		aiCollisionDetector.start();
+
+
+        apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new StaticObstacle[]{staticObstacle});
 		frog = new Frog(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		movement = Movement.RIGHT;
 		artificialMovement = Movement.LEFT;
@@ -97,14 +100,24 @@ public class MainGameScreen implements Screen {
         batch.end();
         updateTime(Gdx.graphics.getDeltaTime());
         readInput();
-        checkApple();
-        checkFrog();
+
+        checkApple(snake);
+        checkApple(artificialSnake);
+        checkFrog(snake);
+        checkFrog(artificialSnake);
 
         if (playerHasLost.get()) {
             System.out.println("PLAYER HAS LOST");
-            collisionDetector.join();
-            game.changeGameScreenToEndScreen("AI", snake.getPoints(), 0);
+            playerCollisionDetector.join();
+            aiCollisionDetector.join();
+            game.changeGameScreenToEndScreen("AI", snake.getPoints(), artificialSnake.getPoints());
         }
+		if (aiHasLost.get()) {
+			System.out.println("AI HAS LOST");
+			playerCollisionDetector.join();
+			aiCollisionDetector.join();
+			game.changeGameScreenToEndScreen("PLAYER", snake.getPoints(), artificialSnake.getPoints());
+		}
     }
 
 
@@ -145,32 +158,25 @@ public class MainGameScreen implements Screen {
 
 
 
-	private void checkApple() {
+	private void checkApple(Snake snake) {
 		Vector2 snakeHeadPosition = snake.getPosition();
 		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
 			apple.moveToRandomPosition();
 			snake.grow();
 		}
-		if(artificialSnakeHeadPosition.x == apple.position.x && artificialSnakeHeadPosition.y == apple.position.y ) {
-			apple.moveToRandomPosition();
-			artificialSnake.grow();
-		}
 	}
 
-	private void checkFrog() {
+	private void checkFrog(Snake snake) {
 		Vector2 snakeHeadPosition = snake.getPosition();
-		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
-		if(snakeHeadPosition.x == frog.position.x && snakeHeadPosition.y == frog.position.y ){
+		Vector2 frogPosition = frog.getPosition();
+
+		if(snakeHeadPosition.x == frogPosition.x && snakeHeadPosition.y == frogPosition.y ){
 			frog.moveToRandomPosition();
 			snake.grow();
 			snake.grow();
 		}
-		if(artificialSnakeHeadPosition.x == frog.position.x && artificialSnakeHeadPosition.y == frog.position.y ) {
-			frog.moveToRandomPosition();
-			artificialSnake.grow();
-			artificialSnake.grow();
-		}
+
 	}
 
 	private void SnakeToApple()
@@ -265,9 +271,10 @@ public class MainGameScreen implements Screen {
 	}
 
 	private Movement frogMove() {
+    	Vector2 frogPosition = frog.getPosition();
 		Vector2 snakePosition = snake.getPosition();
-		double distance = checkDistance(snakePosition, frog.position);
-		Vector2 location = frog.position;
+		double distance = checkDistance(snakePosition, frogPosition);
+		Vector2 location = frogPosition;
 		if(location.x < 10)
 			return Movement.RIGHT;
 		if(location.x > 490)
@@ -278,19 +285,19 @@ public class MainGameScreen implements Screen {
 			return Movement.DOWN;
 
 		if(distance < 50) {
-			Vector2 positionUp = frog.position;
+			Vector2 positionUp = frogPosition;
 			positionUp.y += 1;
 			double distanceUp = checkDistance(snakePosition, positionUp);
 
-			Vector2 positionDown = frog.position;
+			Vector2 positionDown = frogPosition;
 			positionDown.y -= 1;
 			double distanceDown = checkDistance(snakePosition, positionDown);
 
-			Vector2 positionLeft = frog.position;
+			Vector2 positionLeft = frogPosition;
 			positionLeft.x -= 1;
 			double distanceLeft = checkDistance(snakePosition, positionLeft);
 
-			Vector2 positionRight = frog.position;
+			Vector2 positionRight = frogPosition;
 			positionRight.x += 1;
 			double distanceRight = checkDistance(snakePosition, positionRight);
 

@@ -33,6 +33,7 @@ public class CollisionDetector implements Runnable {
     public boolean checkCollisions() {
         for (IObstacle obstacle : obstacles) {
             if (obstacle.isCollisionDetected(subject)) {
+                System.out.println( subject + " BUMPED INTO: " + obstacle);
                 return true;
             }
         }

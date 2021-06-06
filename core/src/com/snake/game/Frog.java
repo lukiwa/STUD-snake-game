@@ -7,12 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.concurrent.ThreadLocalRandom;
 
 
-public class Frog {
+public class Frog implements IMovable {
     private Texture texture;
     private int textureSize;
     private int screenWidth;
     private int screenHeight;
-    public Vector2 position;
+    private Vector2 position;
 
     Frog(int screenWidth, int screenHeight){
         //TODO do not spawn apple on existing obstacle
@@ -32,20 +32,26 @@ public class Frog {
         batch.draw(texture, position.x, position.y);
     }
 
+    @Override
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    @Override
     public void move(Movement movement) {
 
         switch (movement) {
             case LEFT:
-                position.x -= 10;
+                position.x -= textureSize;
                 break;
             case UP:
-                position.y += 10;
+                position.y += textureSize;
                 break;
             case RIGHT:
-                position.x += 10;
+                position.x += textureSize;
                 break;
             case DOWN:
-                position.y -= 10;
+                position.y -= textureSize;
                 break;
         }
     }
