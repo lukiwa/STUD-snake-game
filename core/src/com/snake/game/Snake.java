@@ -8,18 +8,21 @@ import org.w3c.dom.events.EventException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-enum Movement {
-    LEFT, UP, RIGHT, DOWN
-}
-
-class SnakePart extends DrawablePart{
+/**
+ * Derived class from drawable part, represents one of the snake segments
+ */
+class SnakePart extends DrawablePart {
     public SnakePart(Vector2 position) {
         super(position);
         readTexture("head.png");
     }
 }
 
+/**
+ * Player's snake
+ */
 public class Snake implements IMovable, IObstacle {
+    private final int initialLength;
     private int length;
     private final int partSize;
     private final Lock _mutex = new ReentrantLock(true);
@@ -28,7 +31,8 @@ public class Snake implements IMovable, IObstacle {
     private Array<SnakePart> snakeParts;
 
     public Snake() {
-        length = 3;
+        initialLength = 3;
+        length = initialLength;
         int startX = 100;
         int startY = 100;
 
@@ -45,6 +49,8 @@ public class Snake implements IMovable, IObstacle {
     }
 
     public Snake(int startX, int startY) {
+        initialLength = 3;
+        length = initialLength;
         length = 3;
 
 
@@ -91,36 +97,63 @@ public class Snake implements IMovable, IObstacle {
         _mutex.unlock();
     }
 
+    /**
+     * Add new segment at the back of the snake, and increase length
+     */
     public void grow() {
         System.out.println("GROW");
         snakeParts.add(new SnakePart(new Vector2(snakeParts.get(snakeParts.size - 1).position.x,
-                                                 snakeParts.get(snakeParts.size - 1).position.y)));
+                snakeParts.get(snakeParts.size - 1).position.y)));
         ++length;
     }
 
+    /**
+     * Position is in fact the head of the snake - because only head can collide with other objects
+     * @return
+     */
     @Override
     public Vector2 getPosition() {
         return snakeParts.get(0).position;
     }
 
+    /**
+     * Points is current length - initial length
+     * @return
+     */
+    public int getPoints() {
+        System.out.println("LENGTH: " + length);
+        return length - initialLength;
+    }
+
+    /**
+     * Since snake can collide with other snake or with itself
+     * @param movingObject moving object
+     * @return true if collison is detected
+     */
     @Override
     public boolean isCollisionDetected(IMovable movingObject) {
-        //TODO below only true when movingObject is "this"
+
+        int startingIndex = 0;
+        if (movingObject == this) {
+            startingIndex = 1;
+        }
 
         try {
-            for (int i = 1; i < length - 1; ++i) {
-                _mutex.lock();
+            if (movingObject == this) {
 
-                if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
-                        movingObject.getPosition().y == snakeParts.get(i).position.y) {
-                    throw new Exception("Collision detected");
+                for (int i = startingIndex; i < length - 1; ++i) {
+                    _mutex.lock();
+
+                    if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
+                            movingObject.getPosition().y == snakeParts.get(i).position.y) {
+                        throw new Exception("Collision detected");
+                    }
+
+                    _mutex.unlock();
+
                 }
-
-                _mutex.unlock();
-
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             _mutex.unlock();
             return true;
         }

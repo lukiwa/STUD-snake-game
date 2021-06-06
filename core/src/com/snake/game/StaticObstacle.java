@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Part of the obstacle
+ */
 class ObstaclePart extends DrawablePart {
     public ObstaclePart(Vector2 position) {
         super(position);
@@ -11,6 +14,9 @@ class ObstaclePart extends DrawablePart {
     }
 }
 
+/**
+ * Obstacle not able to move
+ */
 public class StaticObstacle implements IObstacle {
 
     private int screenWidth;
