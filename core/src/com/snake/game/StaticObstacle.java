@@ -24,7 +24,6 @@ public class StaticObstacle implements IObstacle {
     private final int partSize;
     private final int numberOfSegments;
     private Array<ObstaclePart> obstacleParts;
-    private Array<Vector2> positions;
 
     StaticObstacle(int screenWidth, int screenHeight, int numberOfSegments) {
         this.screenWidth = screenWidth;
@@ -33,7 +32,6 @@ public class StaticObstacle implements IObstacle {
         ObstaclePart obstaclePart = new ObstaclePart(new Vector2(0, 0));
         partSize = obstaclePart.partSize;
         obstacleParts = new Array<>();
-        positions = new Array<>();
         obstacleParts.add(obstaclePart);
 
         this.numberOfSegments = numberOfSegments;
@@ -43,14 +41,9 @@ public class StaticObstacle implements IObstacle {
             int y = Random.getRandomDivisibleByNumber(partSize, screenHeight - partSize, partSize);
 
             obstacleParts.add(new ObstaclePart(new Vector2(x, y)));
-            positions.add(new Vector2(x, y));
         }
     }
 
-    public Array<Vector2> getObstacles() {
-
-        return positions;
-    }
 
     public void render(SpriteBatch batch) {
         for (ObstaclePart obstaclePart : obstacleParts) {
@@ -72,6 +65,15 @@ public class StaticObstacle implements IObstacle {
         }
 
         return result;
+    }
+
+    @Override
+    public Array<Vector2> getObstaclePositions() {
+        Array<Vector2> positions = new Array<Vector2>();
+        for(ObstaclePart obstaclePart: obstacleParts){
+            positions.add(obstaclePart.position);
+        }
+        return positions;
     }
 }
 

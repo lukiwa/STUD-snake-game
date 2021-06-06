@@ -116,6 +116,8 @@ public class Snake implements IMovable, IObstacle {
         return snakeParts.get(0).position;
     }
 
+
+
     /**
      * Points is current length - initial length
      * @return
@@ -136,28 +138,40 @@ public class Snake implements IMovable, IObstacle {
         int startingIndex = 0;
         if (movingObject == this) {
             startingIndex = 1;
+            //do not check collision with head if this is the same snake
         }
 
         try {
-            if (movingObject == this) {
+            _mutex.lock();
 
-                for (int i = startingIndex; i < length - 1; ++i) {
-                    _mutex.lock();
+            for (int i = startingIndex; i < length - 1; ++i) {
 
-                    if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
-                            movingObject.getPosition().y == snakeParts.get(i).position.y) {
-                        throw new Exception("Collision detected");
-                    }
-
-                    _mutex.unlock();
-
+                if (movingObject.getPosition().x == snakeParts.get(i).position.x &&
+                        movingObject.getPosition().y == snakeParts.get(i).position.y) {
+                    throw new Exception("Collision detected");
                 }
+
             }
+            _mutex.unlock();
+
         } catch (Exception e) {
             _mutex.unlock();
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * IObstacle method - get all snake parts
+     * @return position of all segments
+     */
+    @Override
+    public Array<Vector2> getObstaclePositions() {
+        Array<Vector2> positions = new Array<Vector2>();
+        for(SnakePart snakePart: snakeParts){
+            positions.add(snakePart.position);
+        }
+        return positions;
     }
 }
