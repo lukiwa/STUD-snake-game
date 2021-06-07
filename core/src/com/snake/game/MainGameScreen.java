@@ -16,10 +16,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MainGameScreen implements Screen {
     private float timer = 0.08f;
-    private Snake snake, artificialSnake;
+    private Snake snake;
+    private AISnake artificialSnake;
+
     private Apple apple;
     private Frog frog;
-	private Movement movement, artificialMovement;
+	private Movement movement;
     private WindowBorders borders;
     private CollisionDetector playerCollisionDetector, aiCollisionDetector;
     private StaticObstacle staticObstacle;
@@ -33,28 +35,31 @@ public class MainGameScreen implements Screen {
         System.out.println("CREATE");
         this.game = game;
         batch = new SpriteBatch();
-        snake = new Snake();
-        artificialSnake = new Snake(300, 300);
 
-        borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         staticObstacle = new StaticObstacle(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 20);
-		obstaclesPostions = staticObstacle.getObstaclePositions();
-		IObstacle[] obstacles = new IObstacle[]{snake, artificialSnake, borders, staticObstacle};
+        apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new StaticObstacle[]{staticObstacle});
+        frog = new Frog(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        snake = new Snake(100, 100);
+        movement = Movement.RIGHT;
 
         playerHasLost = new AtomicBoolean(false);
-		aiHasLost = new AtomicBoolean(false);
+        aiHasLost = new AtomicBoolean(false);
+
+        borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		obstaclesPostions = staticObstacle.getObstaclePositions();
+        artificialSnake = new AISnake(300, 300, apple, obstaclesPostions);
+
+        IObstacle[] playerObstacles = new IObstacle[]{snake, artificialSnake, borders, staticObstacle};
+        //because of limited AI capabilities we let aiSnake bump into itself :)
+        IObstacle[] aiObstacles = new IObstacle[]{snake, borders, staticObstacle};
 
 
-        playerCollisionDetector = new CollisionDetector(snake, obstacles, playerHasLost);
-        aiCollisionDetector = new CollisionDetector(artificialSnake, obstacles, aiHasLost);
+        playerCollisionDetector = new CollisionDetector(snake, playerObstacles, playerHasLost);
+        aiCollisionDetector = new CollisionDetector(artificialSnake, aiObstacles, aiHasLost);
         playerCollisionDetector.start();
-		aiCollisionDetector.start();
-
-
-        apple = new Apple(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new StaticObstacle[]{staticObstacle});
-		frog = new Frog(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		movement = Movement.RIGHT;
-		artificialMovement = Movement.LEFT;
+        aiCollisionDetector.start();
     }
 
 
@@ -124,12 +129,11 @@ public class MainGameScreen implements Screen {
     private void updateTime(float delta){
 		timer -= delta;
 		if(timer <= 0){
-			timer = 0.08f;
+            artificialSnake.start();
+            timer = 0.08f;
 			snake.move(movement);
-			avoidObstacle();
-			SnakeToApple();
 			frog.move(frogMove());
-			artificialSnake.move(artificialMovement);
+            artificialSnake.join();
 		}
 	}
 
@@ -158,9 +162,11 @@ public class MainGameScreen implements Screen {
 
 
 
+
+
+	//-----------------POINTS-GAINERS----------------------------
 	private void checkApple(Snake snake) {
 		Vector2 snakeHeadPosition = snake.getPosition();
-		Vector2 artificialSnakeHeadPosition = artificialSnake.getPosition();
 		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
 			apple.moveToRandomPosition();
 			snake.grow();
@@ -173,101 +179,11 @@ public class MainGameScreen implements Screen {
 
 		if(snakeHeadPosition.x == frogPosition.x && snakeHeadPosition.y == frogPosition.y ){
 			frog.moveToRandomPosition();
+			//worth double
 			snake.grow();
 			snake.grow();
 		}
 
-	}
-
-	private void SnakeToApple()
-	{
-		Vector2 snake = artificialSnake.getPosition();
-
-		if(snake.x == apple.position.x && snake.y < apple.position.y) {
-			artificialMovement = Movement.UP;
-		}
-		if(snake.x == apple.position.x && snake.y > apple.position.y) {
-			artificialMovement = Movement.DOWN;
-		}
-		if(snake.y == apple.position.y && snake.x < apple.position.x) {
-			artificialMovement = Movement.RIGHT;
-		}
-		if(snake.y == apple.position.y && snake.x > apple.position.x) {
-			artificialMovement = Movement.LEFT;
-		}
-
-
-		if(snake.x < apple.position.x && snake.y < apple.position.y) {
-			if(artificialMovement == Movement.DOWN)
-				artificialMovement = Movement.RIGHT;
-			if(artificialMovement == Movement.LEFT)
-				artificialMovement = Movement.UP;
-		}
-		if(snake.x > apple.position.x && snake.y < apple.position.y) {
-			if(artificialMovement == Movement.DOWN)
-				artificialMovement = Movement.LEFT;
-			if(artificialMovement == Movement.RIGHT)
-				artificialMovement = Movement.UP;
-		}
-		if(snake.x < apple.position.x && snake.y > apple.position.y) {
-			if(artificialMovement == Movement.LEFT)
-				artificialMovement = Movement.DOWN;
-			if(artificialMovement == Movement.UP)
-				artificialMovement = Movement.RIGHT;
-		}
-		if(snake.x > apple.position.x && snake.y > apple.position.y) {
-			if(artificialMovement == Movement.UP)
-				artificialMovement = Movement.LEFT;
-			if(artificialMovement == Movement.RIGHT)
-				artificialMovement = Movement.DOWN;
-		}
-	}
-
-
-	private void avoidObstacle() {
-
-		Vector2 collision = isCollision();
-		if(collision != null) {
-			if(artificialMovement == Movement.UP)
-				artificialMovement = Movement.LEFT;
-			if(artificialMovement == Movement.LEFT)
-				artificialMovement = Movement.DOWN;
-			if(artificialMovement == Movement.DOWN)
-				artificialMovement = Movement.LEFT;
-			if(artificialMovement == Movement.RIGHT)
-				artificialMovement = Movement.UP;
-		artificialSnake.move(artificialMovement);
-		}
-	}
-
-	// funkcja sprawdzajaca czy wąż jest na kursie kolizyjnym z przeszkodą
-	private Vector2 isCollision() {
-		Vector2 snake = artificialSnake.getPosition();
-		if(artificialMovement == Movement.UP) {
-			for(Vector2 position : obstaclesPostions) {
-				if(position.x == snake.x && position.y > snake.y) // jeśli ten warunek jest spełniony, to wąż idzie na przeszkodę
-					return position;
-			}
-		}
-		if(artificialMovement == Movement.DOWN) {
-			for(Vector2 position : obstaclesPostions) {
-				if(position.x == snake.x && position.y < snake.y)
-					return position;
-			}
-		}
-		if(artificialMovement == Movement.RIGHT) {
-			for(Vector2 position : obstaclesPostions) {
-				if(position.y == snake.y && position.x > snake.x)
-					return position;
-			}
-		}
-		if(artificialMovement == Movement.LEFT) {
-			for(Vector2 position : obstaclesPostions) {
-				if(position.y == snake.y && position.x < snake.x)
-					return position;
-			}
-		}
-		return null;
 	}
 
 	private Movement frogMove() {
