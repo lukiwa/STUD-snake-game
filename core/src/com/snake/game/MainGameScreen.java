@@ -125,7 +125,7 @@ public class MainGameScreen implements Screen {
 		timer -= delta;
 		if(timer <= 0){
 			timer = 0.08f;
-			snake.move(movement);
+			//snake.move(movement);
 			avoidObstacle();
 			SnakeToApple();
 			frog.move(frogMove());
@@ -181,6 +181,9 @@ public class MainGameScreen implements Screen {
 
 	private void SnakeToApple()
 	{
+		Vector2 collision = isCollision();
+		if(artificialMovement == Movement.LEFT && collision != null)
+			artificialSnake.move(Movement.UP);
 		Vector2 snake = artificialSnake.getPosition();
 
 		if(snake.x == apple.position.x && snake.y < apple.position.y) {

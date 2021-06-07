@@ -24,8 +24,8 @@ public class Apple {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.obstaclesToExclude = obstaclesToExclude;
-        int startX = 300;
-        int startY = 300;
+        int startX = 250;
+        int startY = 250;
 
         texture = new Texture("apple.png");
         position = new Vector2(startX, startY);
