@@ -1,4 +1,4 @@
-package com.snake.game;
+package com.snake.game.gamescreens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.snake.game.SnakeGame;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +36,7 @@ public class BestResultsScreen implements Screen {
     private int playerBestPoints;
     private int aiBestPoints;
 
-    BestResultsScreen(final SnakeGame game, String bestResultsFilename){
+    public BestResultsScreen(final SnakeGame game, String bestResultsFilename){
         System.out.println("CREATE BEST RESULT SCREEN");
 
         stage = new Stage();

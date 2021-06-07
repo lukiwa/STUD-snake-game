@@ -1,4 +1,4 @@
-package com.snake.game;
+package com.snake.game.interfaces;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Base class, can be used in objects that contains more than one texture eg. snake or obstacle
  */
-class DrawablePart {
+public class DrawablePart {
     public Texture texture;
     public Vector2 position;
     public int partSize;

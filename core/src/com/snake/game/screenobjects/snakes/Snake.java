@@ -1,9 +1,13 @@
-package com.snake.game;
+package com.snake.game.screenobjects.snakes;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import org.w3c.dom.events.EventException;
+import com.snake.game.interfaces.Movement;
+import com.snake.game.interfaces.DrawablePart;
+import com.snake.game.interfaces.IGameObject;
+import com.snake.game.interfaces.IMovable;
+import com.snake.game.interfaces.IObstacle;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,7 +25,7 @@ class SnakePart extends DrawablePart {
 /**
  * Player's snake
  */
-public class Snake implements IMovable, IObstacle {
+public class Snake implements IMovable, IObstacle, IGameObject {
     private final int initialLength;
     private int length;
     private final int partSize;
@@ -115,7 +119,7 @@ public class Snake implements IMovable, IObstacle {
      * @return true if collison is detected
      */
     @Override
-    public boolean isCollisionDetected(IMovable movingObject) {
+    public boolean isCollisionDetected(IGameObject movingObject) {
 
         int startingIndex = 0;
         if (movingObject == this) {

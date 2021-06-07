@@ -1,7 +1,8 @@
-package com.snake.game;
+package com.snake.game.utilities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
+import com.snake.game.SnakeGame;
+import com.snake.game.interfaces.IGameObject;
+import com.snake.game.interfaces.IObstacle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -12,14 +13,14 @@ public class CollisionDetector implements Runnable {
     private Thread t;
     private boolean timeToEnd;
 
-    private IMovable subject;
+    private IGameObject subject;
     private IObstacle[] obstacles;
     private String winnerName;
     private SnakeGame game;
     private AtomicBoolean isDetected;
 
 
-    public CollisionDetector(IMovable subject, IObstacle[] obstacles, AtomicBoolean isDetected) {
+    public CollisionDetector(IGameObject subject, IObstacle[] obstacles, AtomicBoolean isDetected) {
         this.subject = subject;
         this.obstacles = obstacles;
         this.isDetected = isDetected;

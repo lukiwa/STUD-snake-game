@@ -1,8 +1,12 @@
-package com.snake.game;
+package com.snake.game.screenobjects.obstacles;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.snake.game.utilities.Random;
+import com.snake.game.interfaces.DrawablePart;
+import com.snake.game.interfaces.IGameObject;
+import com.snake.game.interfaces.IObstacle;
 
 /**
  * Part of the obstacle
@@ -25,7 +29,7 @@ public class StaticObstacle implements IObstacle {
     private final int numberOfSegments;
     private Array<ObstaclePart> obstacleParts;
 
-    StaticObstacle(int screenWidth, int screenHeight, int numberOfSegments) {
+    public StaticObstacle(int screenWidth, int screenHeight, int numberOfSegments) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
 
@@ -53,7 +57,7 @@ public class StaticObstacle implements IObstacle {
 
 
     @Override
-    public boolean isCollisionDetected(IMovable movingObject) {
+    public boolean isCollisionDetected(IGameObject movingObject) {
         boolean result = false;
 
         for (int i = 1; i <  numberOfSegments ; ++i) {

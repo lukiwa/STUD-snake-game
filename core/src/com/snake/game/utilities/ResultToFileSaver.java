@@ -1,4 +1,4 @@
-package com.snake.game;
+package com.snake.game.utilities;
 
 import java.io.FileWriter;
 import java.io.IOException;

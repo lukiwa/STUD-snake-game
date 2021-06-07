@@ -1,5 +1,5 @@
 
-package com.snake.game;
+package com.snake.game.gamescreens;
 
 
 import com.badlogic.gdx.Gdx;
@@ -13,6 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.snake.game.SnakeGame;
+import com.snake.game.utilities.ResultToFileSaver;
 
 /**
  * End screen of the game. Allowing restart, save result, exit or redirect to screen with best results

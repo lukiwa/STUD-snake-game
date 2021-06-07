@@ -1,6 +1,10 @@
 package com.snake.game;
 
 import com.badlogic.gdx.*;
+import com.snake.game.gamescreens.BestResultsScreen;
+import com.snake.game.gamescreens.EndScreen;
+import com.snake.game.gamescreens.MainGameScreen;
+import com.snake.game.gamescreens.MenuScreen;
 
 /**
  * Game abstraction, actually responsible for changing game screens and starts rendering

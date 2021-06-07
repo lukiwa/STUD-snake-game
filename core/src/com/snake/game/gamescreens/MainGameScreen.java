@@ -1,4 +1,4 @@
-package com.snake.game;
+package com.snake.game.gamescreens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,8 +7,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.snake.game.*;
+import com.snake.game.interfaces.Collectable;
+import com.snake.game.interfaces.IObstacle;
+import com.snake.game.interfaces.Movement;
+import com.snake.game.screenobjects.powerups.Apple;
+import com.snake.game.screenobjects.powerups.Frog;
+import com.snake.game.screenobjects.obstacles.StaticObstacle;
+import com.snake.game.screenobjects.obstacles.WindowBorders;
+import com.snake.game.screenobjects.snakes.AISnake;
+import com.snake.game.screenobjects.snakes.Snake;
+import com.snake.game.utilities.CollisionDetector;
+import com.snake.game.utilities.PowerupsChecker;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,10 +39,11 @@ public class MainGameScreen implements Screen {
     private SnakeGame game;
     private Array<Vector2> obstaclesPostions;
     private AtomicBoolean playerHasLost, aiHasLost;
+    private PowerupsChecker powerupsChecker;
 
     SpriteBatch batch;
 
-    MainGameScreen(SnakeGame game) {
+    public MainGameScreen(SnakeGame game) {
         System.out.println("CREATE");
         this.game = game;
         batch = new SpriteBatch();
@@ -55,11 +67,13 @@ public class MainGameScreen implements Screen {
         //because of limited AI capabilities we let aiSnake bump into itself :)
         IObstacle[] aiObstacles = new IObstacle[]{snake, borders, staticObstacle};
 
+        powerupsChecker = new PowerupsChecker(new Snake[]{snake, artificialSnake}, new Collectable[]{apple,frog});
 
         playerCollisionDetector = new CollisionDetector(snake, playerObstacles, playerHasLost);
         aiCollisionDetector = new CollisionDetector(artificialSnake, aiObstacles, aiHasLost);
         playerCollisionDetector.start();
         aiCollisionDetector.start();
+
     }
 
 
@@ -106,10 +120,7 @@ public class MainGameScreen implements Screen {
         updateTime(Gdx.graphics.getDeltaTime());
         readInput();
 
-        checkApple(snake);
-        checkApple(artificialSnake);
-        checkFrog(snake);
-        checkFrog(artificialSnake);
+        powerupsChecker.checkIsCollected();
 
         if (playerHasLost.get()) {
             System.out.println("PLAYER HAS LOST");
@@ -132,7 +143,7 @@ public class MainGameScreen implements Screen {
             artificialSnake.start();
             timer = 0.08f;
 			snake.move(movement);
-			frog.move(frogMove());
+			frog.move(frog.frogPerformMoves(snake));
             artificialSnake.join();
 		}
 	}
@@ -159,88 +170,4 @@ public class MainGameScreen implements Screen {
             }
         }
     }
-
-
-
-
-
-	//-----------------POINTS-GAINERS----------------------------
-	private void checkApple(Snake snake) {
-		Vector2 snakeHeadPosition = snake.getPosition();
-		if(snakeHeadPosition.x == apple.position.x && snakeHeadPosition.y == apple.position.y ){
-			apple.moveToRandomPosition();
-			snake.grow();
-		}
-	}
-
-	private void checkFrog(Snake snake) {
-		Vector2 snakeHeadPosition = snake.getPosition();
-		Vector2 frogPosition = frog.getPosition();
-
-		if(snakeHeadPosition.x == frogPosition.x && snakeHeadPosition.y == frogPosition.y ){
-			frog.moveToRandomPosition();
-			//worth double
-			snake.grow();
-			snake.grow();
-		}
-
-	}
-
-	private Movement frogMove() {
-    	Vector2 frogPosition = frog.getPosition();
-		Vector2 snakePosition = snake.getPosition();
-		double distance = checkDistance(snakePosition, frogPosition);
-		Vector2 location = frogPosition;
-		if(location.x < 10)
-			return Movement.RIGHT;
-		if(location.x > 490)
-			return Movement.LEFT;
-		if(location.y < 10)
-			return Movement.UP;
-		if(location.y > 490)
-			return Movement.DOWN;
-
-		if(distance < 50) {
-			Vector2 positionUp = frogPosition;
-			positionUp.y += 1;
-			double distanceUp = checkDistance(snakePosition, positionUp);
-
-			Vector2 positionDown = frogPosition;
-			positionDown.y -= 1;
-			double distanceDown = checkDistance(snakePosition, positionDown);
-
-			Vector2 positionLeft = frogPosition;
-			positionLeft.x -= 1;
-			double distanceLeft = checkDistance(snakePosition, positionLeft);
-
-			Vector2 positionRight = frogPosition;
-			positionRight.x += 1;
-			double distanceRight = checkDistance(snakePosition, positionRight);
-
-			double[] table = {distanceRight, distanceUp, distanceDown, distanceLeft};
-			Arrays.sort(table);
-			System.out.println(distance);
-			if (table[3] == distanceUp)
-				return Movement.UP;
-			if (table[3] == distanceDown)
-				return Movement.DOWN;
-			if (table[3] == distanceLeft)
-				return Movement.LEFT;
-			if (table[3] == distanceRight)
-				return Movement.RIGHT;
-		}
-
-		Movement[] movements = {Movement.UP, Movement.DOWN, Movement.LEFT, Movement.RIGHT};
-		int i = (int)(Math.random()*3) + 1;
-		return movements[i];
-	}
-
-	private double checkDistance(Vector2 snake, Vector2 item)
-	{
-		double distance = Math.sqrt(Math.pow((snake.x - item.x), 2) + Math.pow((snake.y - item.y), 2));
-		return distance;
-	}
-
-
-
 }

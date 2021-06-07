@@ -1,7 +1,9 @@
-package com.snake.game;
+package com.snake.game.screenobjects.snakes;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.snake.game.screenobjects.powerups.Apple;
+import com.snake.game.interfaces.Movement;
 
 public class AISnake extends Snake implements Runnable{
     private Thread t;
@@ -9,7 +11,7 @@ public class AISnake extends Snake implements Runnable{
     private Array<Vector2> obstaclesPostions;
     private Movement artificialMovement;
 
-    AISnake(int startX, int startY, Apple apple, Array<Vector2> obstaclesPostions){
+    public AISnake(int startX, int startY, Apple apple, Array<Vector2> obstaclesPostions){
         super(startX, startY);
         this.apple = apple;
         this.obstaclesPostions = obstaclesPostions;
