@@ -1,16 +1,17 @@
-package com.snake.game;
+package com.snake.game.screenobjects.powerups;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.concurrent.ThreadLocalRandom;
+import com.snake.game.interfaces.Collectable;
+import com.snake.game.interfaces.IObstacle;
+import com.snake.game.utilities.Random;
 
 /**
  * Collectable object for type
  */
-public class Apple {
+public class Apple extends Collectable {
     private Texture texture;
     private int textureSize;
     private int screenWidth;
@@ -19,7 +20,7 @@ public class Apple {
     IObstacle[]  obstaclesToExclude; //do not spawn apple on a snake
 
 
-    Apple(int screenWidth, int screenHeight, IObstacle[] obstaclesToExclude) {
+    public Apple(int screenWidth, int screenHeight, IObstacle[] obstaclesToExclude) {
         //TODO do not spawn apple on existing obstacle
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -67,4 +68,8 @@ public class Apple {
 
     }
 
+    @Override
+    public Vector2 getPosition() {
+        return position;
+    }
 }

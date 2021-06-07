@@ -1,12 +1,14 @@
-package com.snake.game;
+package com.snake.game.screenobjects.obstacles;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.snake.game.interfaces.IGameObject;
+import com.snake.game.interfaces.IObstacle;
 
 /**
  * Borders of the screen are actually obstacles
  */
-public class WindowBorders implements IObstacle{
+public class WindowBorders implements IObstacle {
     private int screenWidth;
     private int screenHeight;
 
@@ -16,7 +18,7 @@ public class WindowBorders implements IObstacle{
     }
 
     @Override
-    public boolean isCollisionDetected(IMovable movingObject) {
+    public boolean isCollisionDetected(IGameObject movingObject) {
         if(movingObject.getPosition().x == 0 || movingObject.getPosition().x == screenWidth ){
             return true;
         }
