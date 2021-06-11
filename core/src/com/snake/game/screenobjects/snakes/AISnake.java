@@ -18,13 +18,15 @@ public class AISnake extends Snake implements Runnable{
         this.artificialMovement = Movement.LEFT;
     }
 
-
-    private void snakeToApple()
-    {
+    /**
+     * Try to get to the apple
+     */
+    private void snakeToApple() {
         Vector2 snake = getPosition();
+        Vector2 collision = isCollision();
 
-        if(snake.x == apple.position.x && snake.y < apple.position.y) {
-            artificialMovement = Movement.UP;
+        if (artificialMovement == Movement.LEFT && collision != null){
+            move(Movement.UP);
         }
         if(snake.x == apple.position.x && snake.y > apple.position.y) {
             artificialMovement = Movement.DOWN;
@@ -63,6 +65,9 @@ public class AISnake extends Snake implements Runnable{
         }
     }
 
+    /**
+     * Avoid obstacles when going to apple
+     */
     public void avoidObstacle(){
         Vector2 collision = isCollision();
         if(collision != null) {
@@ -78,6 +83,10 @@ public class AISnake extends Snake implements Runnable{
         }
     }
 
+    /**
+     * Check if snake is on collision course
+     * @return where collision will happen
+     */
     public Vector2 isCollision(){
         Vector2 snake = getPosition();
         if(artificialMovement == Movement.UP) {
@@ -113,7 +122,7 @@ public class AISnake extends Snake implements Runnable{
      */
     public void start() {
         if (t == null) {
-            t = new Thread(this, "CollisionDetector");
+            t = new Thread(this, "AISnake");
             t.start();
         }
     }

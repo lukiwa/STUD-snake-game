@@ -61,7 +61,7 @@ public class MainGameScreen implements Screen {
 
         borders = new WindowBorders(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		obstaclesPostions = staticObstacle.getObstaclePositions();
-        artificialSnake = new AISnake(300, 300, apple, obstaclesPostions);
+        artificialSnake = new AISnake(250, 250, apple, obstaclesPostions);
 
         IObstacle[] playerObstacles = new IObstacle[]{snake, artificialSnake, borders, staticObstacle};
         //because of limited AI capabilities we let aiSnake bump into itself :)
@@ -110,6 +110,8 @@ public class MainGameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(1, 1, 1, 1);
+        powerupsChecker.start();
+
         batch.begin();
         staticObstacle.render(batch);
         snake.render(batch);
@@ -120,20 +122,17 @@ public class MainGameScreen implements Screen {
         updateTime(Gdx.graphics.getDeltaTime());
         readInput();
 
-        powerupsChecker.checkIsCollected();
 
-        if (playerHasLost.get()) {
-            System.out.println("PLAYER HAS LOST");
+        if (playerHasLost.get() || aiHasLost.get()) {
             playerCollisionDetector.join();
             aiCollisionDetector.join();
-            game.changeGameScreenToEndScreen("AI", snake.getPoints(), artificialSnake.getPoints());
+            powerupsChecker.join();
+
+            game.changeGameScreenToEndScreen(playerHasLost.get()?"AI" : "PLAYER", snake.getPoints(), artificialSnake.getPoints());
         }
-		if (aiHasLost.get()) {
-			System.out.println("AI HAS LOST");
-			playerCollisionDetector.join();
-			aiCollisionDetector.join();
-			game.changeGameScreenToEndScreen("PLAYER", snake.getPoints(), artificialSnake.getPoints());
-		}
+
+        powerupsChecker.join();
+
     }
 
 

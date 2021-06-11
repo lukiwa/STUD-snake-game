@@ -42,6 +42,9 @@ public class Frog extends Collectable implements IMovable {
     }
 
     @Override
+    /**
+     * Move to given postition
+     */
     public void move(Movement movement) {
 
         switch (movement) {
@@ -60,6 +63,9 @@ public class Frog extends Collectable implements IMovable {
         }
     }
 
+    /**
+     * Move to random position when picked up
+     */
     public void moveToRandomPosition(){
         int x = Random.getRandomDivisibleByNumber(textureSize, screenWidth - textureSize, textureSize);
         int y = Random.getRandomDivisibleByNumber(textureSize, screenHeight - textureSize, textureSize);
@@ -68,7 +74,11 @@ public class Frog extends Collectable implements IMovable {
 
     }
 
-
+    /**
+     * Perform movement
+     * @param snake nearby player snake to be avoided
+     * @return where to move
+     */
     public Movement frogPerformMoves(Snake snake) {
         Vector2 frogPosition = position;
         Vector2 snakePosition = snake.getPosition();
@@ -118,6 +128,12 @@ public class Frog extends Collectable implements IMovable {
         return movements[i];
     }
 
+    /**
+     * Check distance between player snake and given position
+     * @param snake snake position
+     * @param item position of item
+     * @return distance
+     */
     private double checkDistance(Vector2 snake, Vector2 item)
     {
         double distance = Math.sqrt(Math.pow((snake.x - item.x), 2) + Math.pow((snake.y - item.y), 2));
