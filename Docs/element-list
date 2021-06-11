@@ -1,0 +1,8 @@
+com.snake.game
+com.snake.game.desktop
+com.snake.game.gamescreens
+com.snake.game.interfaces
+com.snake.game.screenobjects.obstacles
+com.snake.game.screenobjects.powerups
+com.snake.game.screenobjects.snakes
+com.snake.game.utilities
