@@ -30,6 +30,7 @@ public class Snake implements IMovable, IObstacle, IGameObject {
     private int length;
     private final int partSize;
     private final Lock _mutex = new ReentrantLock(true);
+    private boolean toGrowOnNextRender = false;
 
 
     private Array<SnakePart> snakeParts;
@@ -55,6 +56,9 @@ public class Snake implements IMovable, IObstacle, IGameObject {
 
         for (SnakePart snakePart : snakeParts) {
             snakePart.render(batch);
+        }
+        if(toGrowOnNextRender){
+            grow();
         }
     }
 
@@ -84,13 +88,22 @@ public class Snake implements IMovable, IObstacle, IGameObject {
     }
 
     /**
+     * Signializes to grow on next iteration
+     */
+    public void toGrowOnNextRender(){
+        this.toGrowOnNextRender = true;
+    }
+
+
+    /**
      * Add new segment at the back of the snake, and increase length
      */
-    public void grow() {
+    private void grow() {
         System.out.println("GROW");
         snakeParts.add(new SnakePart(new Vector2(snakeParts.get(snakeParts.size - 1).position.x,
                 snakeParts.get(snakeParts.size - 1).position.y)));
         ++length;
+        this.toGrowOnNextRender = false;
     }
 
     /**

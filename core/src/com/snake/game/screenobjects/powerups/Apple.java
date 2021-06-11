@@ -21,7 +21,7 @@ public class Apple extends Collectable {
 
 
     public Apple(int screenWidth, int screenHeight, IObstacle[] obstaclesToExclude) {
-        //TODO do not spawn apple on existing obstacle
+
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.obstaclesToExclude = obstaclesToExclude;
